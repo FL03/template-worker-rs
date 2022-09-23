@@ -1,0 +1,32 @@
+[package]
+authors = ["FL03 <jo3mccain@icloud.com> (https://gitlab.com/FL03)"]
+categories = []
+description = "template-rs-worker"
+edition = "2021"
+homepage = ""
+keywords = []
+license = "MIT"
+name = "template-rs-worker"
+readme = "README.md"
+repository = ""
+version = "0.1.0"
+
+[features]
+default = ["core"]
+full = ["core"]
+
+core = ["console_error_panic_hook"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+
+
+[dependencies]
+cfg-if = "1.0.0"
+console_error_panic_hook = { optional = true, version = "0.1.7" }
+serde_json = "1.0.85"
+worker = "0.0.11"
+
+[profile.release]
+opt-level = "z"
