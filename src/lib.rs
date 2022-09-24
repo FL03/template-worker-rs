@@ -1,3 +1,4 @@
+use ethers::providers::Provider;
 use serde_json::json;
 use worker::*;
 
@@ -13,6 +14,20 @@ fn log_request(req: &Request) {
     );
 }
 
+async fn set_provider(url: Option<&str>) -> Provider<ethers::providers::Http> {
+    fn provider(endpoint: &str) -> Provider<ethers::providers::Http> {
+        match Provider::try_from(endpoint) {
+            Ok(v) => v,
+            Err(e) => panic!("Failed to connect to the specified provider")
+        }
+    }
+    match url {
+        Some(v) => provider(v),
+        None => provider("https://rpc.ankr.com/eth")
+    }
+    
+}
+
 #[event(fetch)]
 pub async fn main(req: Request, env: Env, _ctx: worker::Context) -> Result<Response> {
     log_request(&req);
@@ -24,12 +39,15 @@ pub async fn main(req: Request, env: Env, _ctx: worker::Context) -> Result<Respo
     // catch-alls to match on specific patterns. Alternatively, use `Router::with_data(D)` to
     // provide arbitrary data that will be accessible in each route via the `ctx.data()` method.
     let router = Router::new();
+    let provider = set_provider(None).await;
 
     // Add as many routes as your Worker needs! Each route will get a `Request` for handling HTTP
     // functionality and a `RouteContext` which you can use to  and get route parameters and
     // Environment bindings like KV Stores, Durable Objects, Secrets, and Variables.
     router
         .get("/", |_, _| Response::ok("Hello from Workers!"))
+        .get("/eth", |_, _| Response::ok("Welcome to Ethereum"))
+        
         .post_async("/form/:field", |mut req, ctx| async move {
             if let Some(name) = ctx.param("field") {
                 let form = req.form_data().await?;

@@ -21,10 +21,10 @@ core = ["console_error_panic_hook"]
 crate-type = ["cdylib", "rlib"]
 
 
-
 [dependencies]
 cfg-if = "1.0.0"
 console_error_panic_hook = { optional = true, version = "0.1.7" }
+ethers = "0.17.0"
 serde_json = "1.0.85"
 worker = "0.0.11"
 
